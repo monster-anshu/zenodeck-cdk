@@ -29,6 +29,11 @@ export class ZenodeckCdkStack extends cdk.Stack {
       bucketName: STAGE + '-zenodeck-temp',
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      lifecycleRules: [
+        {
+          expiration: cdk.Duration.days(1),
+        },
+      ],
     });
 
     const publicPolicy = new iam.PolicyStatement({
@@ -45,6 +50,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
       bucketName: STAGE + '-zenodeck-user-service',
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
     });
 
     const userServiceApiArnParts = USER_SERVICE_API_GATEWAY_ARN.split(':');
