@@ -10,6 +10,7 @@ const STAGE = process.env.STAGE as string;
 const USER_SERVICE_API_GATEWAY_ARN = process.env.USER_SERVICE_API_GATEWAY_ARN as string;
 const API_DOMAIN = process.env.API_DOMAIN as string;
 const API_DOMAIN_CERTIFICATE_ARN = process.env.API_DOMAIN_CERTIFICATE_ARN as string;
+const CAMPAIGN_API_ORIGIN = process.env.CAMPAIGN_API_ORIGIN as string;
 
 export class ZenodeckCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -34,6 +35,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
           expiration: cdk.Duration.days(1),
         },
       ],
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
     });
 
     const publicPolicy = new iam.PolicyStatement({
@@ -51,6 +53,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
     });
 
     const userServiceApiArnParts = USER_SERVICE_API_GATEWAY_ARN.split(':');
@@ -83,6 +86,12 @@ export class ZenodeckCdkStack extends cdk.Stack {
           }),
           originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        },
+        '/api/v1/campaign/*': {
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+          origin: new cloudfrontOrigin.HttpOrigin(CAMPAIGN_API_ORIGIN),
+          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
         },
       },
     });
