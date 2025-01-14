@@ -63,6 +63,17 @@ export class ZenodeckCdkStack extends cdk.Stack {
 
     const apiDomainCerificate = certificatemanager.Certificate.fromCertificateArn(this, 'ApiDomainCetificate', API_DOMAIN_CERTIFICATE_ARN);
 
+    // const corsPolicy = new cloudfront.ResponseHeadersPolicy(this, 'CorsPolicy', {
+    //   corsBehavior: {
+    //     accessControlAllowCredentials: true,
+    //     accessControlAllowHeaders: ['Content-Type', 'Authorization'],
+    //     accessControlAllowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    //     accessControlAllowOrigins: ['*.himanshu-gunwant.com', 'localhost:3000'],
+    //     originOverride: true,
+    //     accessControlMaxAge: cdk.Duration.days(1),
+    //   },
+    // });
+
     const apiDistribution = new cloudfront.Distribution(this, 'ZenodeckApiDistribution', {
       domainNames: [API_DOMAIN],
       certificate: apiDomainCerificate,
@@ -73,7 +84,9 @@ export class ZenodeckCdkStack extends cdk.Stack {
 
       defaultBehavior: {
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-        origin: cloudfrontOrigin.S3BucketOrigin.withOriginAccessControl(tempBucket),
+        origin: new cloudfrontOrigin.HttpOrigin(userServiceApiUrl, {
+          originPath: `/${STAGE}`,
+        }),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
 
@@ -86,6 +99,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
           }),
           originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          // responseHeadersPolicy: corsPolicy,
         },
         '/api/v1/campaign/*': {
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
@@ -93,6 +107,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
           origin: new cloudfrontOrigin.HttpOrigin(CAMPAIGN_API_ORIGIN),
           originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
+          // responseHeadersPolicy: corsPolicy,
         },
       },
     });
