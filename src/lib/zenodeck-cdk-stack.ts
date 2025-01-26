@@ -83,11 +83,11 @@ export class ZenodeckCdkStack extends cdk.Stack {
       priceClass: cloudfront.PriceClass.PRICE_CLASS_ALL,
 
       defaultBehavior: {
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-        origin: new cloudfrontOrigin.HttpOrigin(userServiceApiUrl, {
-          originPath: `/${STAGE}`,
-        }),
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        origin: new cloudfrontOrigin.HttpOrigin(CAMPAIGN_API_ORIGIN),
+        originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
       },
 
       additionalBehaviors: {
@@ -101,14 +101,14 @@ export class ZenodeckCdkStack extends cdk.Stack {
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           // responseHeadersPolicy: corsPolicy,
         },
-        '/api/v1/campaign/*': {
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-          origin: new cloudfrontOrigin.HttpOrigin(CAMPAIGN_API_ORIGIN),
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
-          // responseHeadersPolicy: corsPolicy,
-        },
+        // '/api/v1/campaign/*': {
+        //   allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        //   cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        //   origin: new cloudfrontOrigin.HttpOrigin(CAMPAIGN_API_ORIGIN),
+        //   originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        //   viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
+        //   // responseHeadersPolicy: corsPolicy,
+        // },
       },
     });
   }
