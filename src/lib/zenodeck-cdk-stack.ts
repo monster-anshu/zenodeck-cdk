@@ -98,7 +98,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
             originPath: `/${STAGE}`,
           }),
           originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
           // responseHeadersPolicy: corsPolicy,
         },
         // '/api/v1/campaign/*': {
