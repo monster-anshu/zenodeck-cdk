@@ -56,6 +56,15 @@ export class ZenodeckCdkStack extends cdk.Stack {
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
     });
 
+    const campaignBucket = new s3.Bucket(this, 'ZenodeckCampaignBucket', {
+      autoDeleteObjects: true,
+      bucketName: STAGE + '-zenodeck-campaign',
+      cors: [corsRule],
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
+    });
+
     const userServiceApiArnParts = USER_SERVICE_API_GATEWAY_ARN.split(':');
     const region = userServiceApiArnParts[3]; // Extract region
     const apiId = userServiceApiArnParts[5].split('/')[2]; // Extract API ID
