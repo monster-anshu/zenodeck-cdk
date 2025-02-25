@@ -26,7 +26,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
 
     const tempBucket = new s3.Bucket(this, 'ZenodeckTempBucket', {
       autoDeleteObjects: true,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false }),
       bucketName: STAGE + '-zenodeck-temp',
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -35,7 +35,7 @@ export class ZenodeckCdkStack extends cdk.Stack {
           expiration: cdk.Duration.days(1),
         },
       ],
-      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
+      objectOwnership: s3.ObjectOwnership.OBJECT_WRITER,
     });
 
     const publicPolicy = new iam.PolicyStatement({
@@ -52,8 +52,8 @@ export class ZenodeckCdkStack extends cdk.Stack {
       bucketName: STAGE + '-zenodeck-user-service',
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
-      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false }),
+      objectOwnership: s3.ObjectOwnership.OBJECT_WRITER,
     });
 
     const campaignBucket = new s3.Bucket(this, 'ZenodeckCampaignBucket', {
@@ -61,8 +61,8 @@ export class ZenodeckCdkStack extends cdk.Stack {
       bucketName: STAGE + '-zenodeck-campaign',
       cors: [corsRule],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
-      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED,
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false }),
+      objectOwnership: s3.ObjectOwnership.OBJECT_WRITER,
     });
 
     const userServiceApiArnParts = USER_SERVICE_API_GATEWAY_ARN.split(':');
