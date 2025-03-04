@@ -65,6 +65,15 @@ export class ZenodeckCdkStack extends cdk.Stack {
       objectOwnership: s3.ObjectOwnership.OBJECT_WRITER,
     });
 
+    const cmsBucket = new s3.Bucket(this, 'MonsterAnshuCmdBucket', {
+      autoDeleteObjects: true,
+      bucketName: 'monster-anshu-cms',
+      cors: [corsRule],
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false }),
+      objectOwnership: s3.ObjectOwnership.OBJECT_WRITER,
+    });
+
     const userServiceApiArnParts = USER_SERVICE_API_GATEWAY_ARN.split(':');
     const region = userServiceApiArnParts[3]; // Extract region
     const apiId = userServiceApiArnParts[5].split('/')[2]; // Extract API ID
